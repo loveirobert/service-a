@@ -17,6 +17,7 @@ import { Messaging } from './services/Messaging'
 const app = express()
 const dirname = dirname
 const messaging = new Messaging(config)
+messaging.start()
 
 // view engine setup
 app.set('views', path.join('views'))

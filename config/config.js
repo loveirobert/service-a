@@ -1,15 +1,20 @@
 export const config = {
   "rascal": {
     "vhosts": {
-
       "registration": {
-
-        // Define the vhost connection parameters. Specify multiple entries for cluster
+            // Define the vhost connection parameters. Specify multiple entries for cluster
         "connections": [
           {
+            "slashes": true,
+            "protocol": "amqp",
+            "hostname": "localhost",
             "user": "guest",
             "password": "guest",
-            "port": 5672
+            "port": 5672,
+            "vhost": "registration",
+            "options": {
+                "heartbeat": 5
+            }
           }
         ],
 
