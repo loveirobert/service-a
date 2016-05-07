@@ -10,8 +10,13 @@ import users from './routes/users'
 
 import nsm from 'node-sass-middleware'
 
+import { config } from './config/config'
+
+import { Messaging } from './services/Messaging'
+
 const app = express()
 const dirname = dirname
+const messaging = new Messaging(config)
 
 // view engine setup
 app.set('views', path.join('views'))
