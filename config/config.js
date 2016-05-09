@@ -23,7 +23,8 @@ export const config = {
           "service",      // Shared exchange for all services within this vhost
           "delay",        // To delay failed messages before a retry
           "retry",        // To retry failed messages a up to maximum number of times
-          "dead_letters"  // When retring fails messages end up here
+          "dead_letters",  // When retring fails messages end up here
+          "mail"
         ],
 
         // Define queues within the registration vhost
@@ -32,6 +33,17 @@ export const config = {
 
           // Create a queue for saving users
           "registration_service:user:save": {
+            "options": {
+              "arguments": {
+                // Route nacked messages to a service specific dead letter queue
+                "x-dead-letter-exchange": "dead_letters",
+                "x-dead-letter-routing-key": "registration_service.dead_letter"
+              }
+            }
+          },
+
+          // Create a queue for saving users
+          "registration_mail:user:saved": {
             "options": {
               "arguments": {
                 // Route nacked messages to a service specific dead letter queue
@@ -77,6 +89,8 @@ export const config = {
           // Route delete user messages to the delete queue
           "service[registration_webapp.user.deleted.#] -> registration_service:user:delete": {},
 
+          "service[registration_service.user.saved.#] -> registration_mail:user:saved": {},
+
           // Route delayed messages to the 1 minute delay queue
           "delay[delay.1m] -> delay:1m": {},
 
@@ -85,8 +99,7 @@ export const config = {
           "retry[registration_service:user:delete.#] -> registration_service:user:delete": {},
 
           // Route dead letters the service specific dead letter queue
-          "dead_letters[registration_service.dead_letter] -> dead_letters:registration_service": {}
-
+          "dead_letters[registration_service.dead_letter] -> dead_letters:registration_service": {},
         },
 
         // Setup subscriptions
